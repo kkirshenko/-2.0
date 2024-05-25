@@ -1,0 +1,150 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <locale>
+
+using namespace std;
+
+class StationeryItem {
+public:
+    int itemNumber;
+    string itemName;
+    double wholesalePrice;
+    double retailPrice;
+    int quantity;
+};
+
+class Pen : public StationeryItem {
+public:
+    string inkColor;
+    double penSize;
+};	
+
+class Notebook : public StationeryItem {
+public:
+    int pageCount;
+    string paperType;
+};
+
+void setRussianLocale() {
+    setlocale(LC_ALL, "ru_RU");
+}
+
+void printMenu() {
+    cout << "Меню:" << endl;
+    cout << "1. Показать список товаров" << endl;
+    cout << "2. Изменить товары" << endl;
+    cout << "3. Запрос товаров" << endl;
+    cout << "4. Статистика" << endl;
+    cout << "5. Выход" << endl;
+}
+
+void displayItems(const vector<StationeryItem>& items) {
+    cout << "Список товаров:" << endl;
+    for (const auto& item : items) {
+        cout << "Номер товара: " << item.itemNumber << endl;
+        cout << "Название товара: " << item.itemName << endl;
+        cout << "Оптовая цена: " << item.wholesalePrice << endl;
+        cout << "Розничная цена: " << item.retailPrice << endl;
+        cout << "Количество: " << item.quantity << endl;
+        cout << endl;
+    }
+}
+
+void editItems(vector<StationeryItem>& items) {
+    int choice;
+    cout << "Опции редактирования:" << endl;
+    cout << "1. Добавить товар" << endl;
+    cout << "2. Удалить товар" << endl;
+    cin >> choice;
+    if (choice == 1) {
+        StationeryItem newItem;
+        cout << "Введите номер товара: ";
+        cin >> newItem.itemNumber;
+        cout << "Введите название товара: ";
+        cin >> newItem.itemName;
+        cout << "Введите оптовую цену: ";
+        cin >> newItem.wholesalePrice;
+        cout << "Введите розничную цену: ";
+        cin >> newItem.retailPrice;
+        cout << "Введите количество: ";
+        cin >> newItem.quantity;
+
+        items.push_back(newItem);
+        cout << "Товар успешно добавлен!" << endl;
+    }
+    else if (choice == 2) {
+        int itemNumberToDelete;
+        cout << "Введите номер товара для удаления: ";
+        cin >> itemNumberToDelete;
+
+        for (auto it = items.begin(); it != items.end(); ++it) {
+            if (it->itemNumber == itemNumberToDelete) {
+                items.erase(it);
+                cout << "Товар успешно удален!" << endl;
+                break;
+            }
+        }
+    }
+}
+
+void queryItems(const vector<StationeryItem>& items, int itemNumber) {
+    for (const auto& item : items) {
+        if (item.itemNumber == itemNumber) {
+            cout << "Номер товара: " << item.itemNumber << endl;
+            cout << "Название товара: " << item.itemName << endl;
+            cout << "Оптовая цена: " << item.wholesalePrice << endl;
+            cout << "Розничная цена: " << item.retailPrice << endl;
+            cout << "Количество: " << item.quantity << endl;
+            break;
+        }
+    }
+}
+
+int totalQuantity(const vector<StationeryItem>& items, int itemNumber) {
+    int total = 0;
+    for (const auto& item : items) {
+        if (item.itemNumber == itemNumber) {
+            total += item.quantity;
+        }
+    }
+    return total;
+}
+
+int main() {
+    setRussianLocale();
+    vector<StationeryItem> items;
+    int choice;
+    int itemNumber;
+    do {
+        printMenu();
+        cin >> choice;
+
+        switch (choice) {
+        case 1:
+            displayItems(items);
+            break;
+        case 2:
+            editItems(items);
+            break;
+        case 3:
+            cout << "Введите номер товара для запроса: ";
+            cin >> itemNumber;
+            queryItems(items, itemNumber);
+            break;
+        case 4:
+            cout << "Введите номер товара для статистики: ";
+            cin >> itemNumber;
+            cout << "Общее количество: " << totalQuantity(items, itemNumber) << endl;
+            break;
+        case 5:
+            cout << "Завершение программы..." << endl;
+            break;
+        default:
+            cout << "Неверный выбор. Пожалуйста, повторите попытку." << endl;
+            break;
+        }
+    } while (choice != 5);
+
+    return 0;
+}
